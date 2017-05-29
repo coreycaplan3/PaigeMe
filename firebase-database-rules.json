@@ -1,0 +1,56 @@
+{
+  "rules": {
+    "users": {
+      "$uid": {
+        ".read": "$uid === auth.uid",
+        ".write": "$uid === auth.uid",
+        ".validate": "newData.hasChildren(['name', 'profilePicture', 'email']) && newData.child('name').isString() && newData.child('profilePicture').isString() && newData.child('email').isString()"
+      }
+    },
+    "userEmails": {
+      ".read": "auth.uid !== null",
+      "$email": {
+        ".write": "root.child('users').child(auth.uid).child('email').val() === $email"
+      }
+    },
+    "userChats": {
+      "$uid": {
+        ".read": "$uid === auth.uid",
+        ".write": "$uid === auth.uid"
+      }
+    },
+    "chats": {
+      "$chatId": {
+        ".read": "root.child('chats').child($chatId).hasChild(auth.uid)",
+        ".write" : "root.child('userChats').child(auth.uid).hasChild($chatId)",
+        "$uid": {
+          ".write": "root.child('userChats').child($uid).hasChild($chatId) && $uid === auth.uid",
+          ".validate": "newData.hasChildren(['name', 'profilePicture']) && newData.child('name').isString() && newData.child('profilePicture').isString()"
+        },
+        "lastMessage": {
+          ".write": "root.child('chats').child($chatId).hasChild(auth.uid)",
+          ".validate": "newData.hasChildren(['name', 'profilePicture', 'text'])"
+        }
+      }
+    },
+    "messages": {
+      "$chatId": {
+        ".read": "root.child('userChats').child(auth.uid).hasChild($chatId)",
+        ".write": "root.child('userChats').child(auth.uid).hasChild($chatId)",
+        "$messageId": {
+          ".validate": "newData.hasChildren(['uid', 'time', 'text', 'sound', 'img']) && newData.child('uid').val() === auth.uid && newData.child('time').val() < now"
+        }
+      }
+    },
+    "sounds": {
+      "$soundId": {
+        ".read": "auth.uid !== null"
+      }
+    },
+    "images": {
+      "$imageId": {
+        ".read": "auth.uid !== null"
+      }
+    }
+  }
+}

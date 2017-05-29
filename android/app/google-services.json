@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "584938196675",
+    "firebase_url": "https://paigeme-52db8.firebaseio.com",
+    "project_id": "paigeme-52db8",
+    "storage_bucket": "paigeme-52db8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:584938196675:android:dd83d90ae32c4e01",
+        "android_client_info": {
+          "package_name": "com.paigeme"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "584938196675-jc7d73ngs05jl423sioil4molvrig9og.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.paigeme",
+            "certificate_hash": "22cd67a04b0ae82da55721fc0f23a2c165c2b574"
+          }
+        },
+        {
+          "client_id": "584938196675-ts30l44kkhgc3unnvpf90mk364p7ma79.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZZTUPmLK0iydvBOBE8-WFyAHJm4GAidE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "584938196675-ts30l44kkhgc3unnvpf90mk364p7ma79.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
