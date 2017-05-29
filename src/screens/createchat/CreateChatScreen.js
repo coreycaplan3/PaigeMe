@@ -71,6 +71,6 @@ export default class CreateChatScreen extends Component {
 
 const styles = StyleSheet.create({
     userContainer: {
-        borderTop: '#999'
+        // borderTop: '#999'
     }
 });

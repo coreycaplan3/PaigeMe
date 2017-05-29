@@ -8,10 +8,8 @@ import React from 'react';
 import {
     AppRegistry,
 } from 'react-native';
-import {StackNavigator} from 'react-navigation';
+import * as Routes from './src/config/Routes';
 import * as firebase from 'firebase';
-import MainScreen from './src/screens/main/MainScreen';
-import ChatDetailsScreen from "./src/screens/chatdetails/ChatDetailsScreen";
 
 const config = {
     apiKey: "AIzaSyDoFa-UtnXB9YdzZx04l93qx0UW7qPQLtg",
@@ -23,9 +21,4 @@ const config = {
 };
 firebase.initializeApp(config);
 
-const PaigeMe = StackNavigator({
-    Main: {screen: MainScreen},
-    ChatDetails: {screen: ChatDetailsScreen},
-});
-
-AppRegistry.registerComponent('PaigeMe', () => PaigeMe);
+AppRegistry.registerComponent('PaigeMe', () => Routes.PaigeMe);

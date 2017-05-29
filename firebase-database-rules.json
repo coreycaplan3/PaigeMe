@@ -23,13 +23,17 @@
       "$chatId": {
         ".read": "root.child('chats').child($chatId).hasChild(auth.uid)",
         ".write" : "root.child('userChats').child(auth.uid).hasChild($chatId)",
+        ".validate": "newData.hasChildren(['chatMembers'])",
+        "chatMembers": {
+          ".validate": "root.child('users').hasChild(newData.val())"
+        },
         "$uid": {
           ".write": "root.child('userChats').child($uid).hasChild($chatId) && $uid === auth.uid",
           ".validate": "newData.hasChildren(['name', 'profilePicture']) && newData.child('name').isString() && newData.child('profilePicture').isString()"
         },
         "lastMessage": {
           ".write": "root.child('chats').child($chatId).hasChild(auth.uid)",
-          ".validate": "newData.hasChildren(['name', 'profilePicture', 'text'])"
+          ".validate": "newData.hasChildren(['name', 'profilePicture', 'text', 'time'])"
         }
       }
     },

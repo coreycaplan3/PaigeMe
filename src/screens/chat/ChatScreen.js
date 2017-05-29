@@ -3,12 +3,13 @@
  */
 import React, {Component} from 'react';
 import {View, Text, Button, StyleSheet} from 'react-native';
-import ChatScreenNavMenu from "../../components/ChatScreenNavMenu";
+import globalStyles from '../../styles/GlobalStyles';
 
 export default class ChatScreen extends Component {
 
-    static navigationOptions = ({navigation}) => {
-        headerRight: <ChatScreenNavMenu/>
+    static navigationOptions = {
+        title: "PaigeMe",
+        headerStyle: globalStyles.bgPrimaryColor
     };
 
     constructor(props) {
@@ -21,7 +22,7 @@ export default class ChatScreen extends Component {
                 <Text>Hello Chat</Text>
                 <Button title="Go to Chat" onPress={() => {
                     this.props.navigation.navigate("ChatDetails")
-                }} />
+                }}/>
             </View>
         );
     }

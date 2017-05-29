@@ -4,11 +4,31 @@
 import React, {Component} from 'react';
 import {View, Image, StyleSheet} from 'react-native';
 import globalStyles from '../../styles/GlobalStyles';
+import * as firebase from 'firebase';
+import * as Routes from '../../config/Routes';
 
 export default class LoadingScreen extends React.Component {
 
-    constructor() {
-        super();
+    static navigationOptions = {
+        headerStyle: {
+            display: 'none'
+        }
+    };
+
+    constructor(props) {
+        super(props);
+    }
+
+    componentDidMount() {
+        setTimeout(() => {
+            firebase.auth().onAuthStateChanged(user => {
+                if(user) {
+                    this.props.navigation.dispatch(Routes.resetToChat);
+                } else {
+                    this.props.navigation.dispatch(Routes.resetToLogin);
+                }
+            })
+        }, 1000);
     }
 
     render() {
