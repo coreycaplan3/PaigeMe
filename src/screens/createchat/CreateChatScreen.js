@@ -42,33 +42,36 @@ export default class CreateChatScreen extends Component {
             .startAt(params)
             .limitToFirst(25)
             .on("child_added", (snap) => {
-                users.push({email: snap.val().email, uid: snap.key, name: snap.val().name});
-                this.setState({
-                    users: this.state.users.cloneWithRows(users)
-                });
+                if (firebase.auth().currentUser && firebase.auth().currentUser.email !== snap.val().email) {
+                    users.push({email: snap.val().email, uid: snap.key, name: snap.val().name});
+                    this.setState({
+                        users: this.state.users.cloneWithRows(users)
+                    });
+                }
             }, (error) => {
                 console.log("Error: ", error);
             });
     }
 
     createChatAndNavigate(user) {
+        const otherUser = {uid: user.uid, name: user.name, profilePicture: user.photoURL};
         const updates = {};
         const currentUser = firebase.auth().currentUser;
 
         const chatId = firebase.database().ref("userChats").child(firebase.auth().currentUser.uid).push().key;
-        const userChatObject = {};
-        userChatObject[chatId] = true;
-        updates["userChats/" + currentUser.uid] = userChatObject;
 
         const chat = {};
         chat["creatorId"] = currentUser.uid;
         chat["otherId"] = user.uid;
         chat[currentUser.uid] = {name: currentUser.displayName, profilePicture: currentUser.photoURL};
 
+        updates["userChats/" + currentUser.uid + "/" + chatId] = chat;
         updates["chats/" + chatId] = chat;
         firebase.database().ref().update(updates, (error) => {
             if (!error) {
-                this.props.navigation.dispatch(resetToChatDetailsFromCreation(chatId));
+                this.props.navigation.dispatch(resetToChatDetailsFromCreation(chatId, otherUser));
+            } else {
+                console.log("Error creating chat: ", error);
             }
         })
     }

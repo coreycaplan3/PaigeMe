@@ -1,34 +1,48 @@
 {
   "rules": {
     "users": {
+      ".read": "auth.uid != null",
+      ".indexOn": "email",
       "$uid": {
-        ".read": "$uid === auth.uid",
         ".write": "$uid === auth.uid",
         ".validate": "newData.hasChildren(['name', 'profilePicture', 'email']) && newData.child('name').isString() && newData.child('profilePicture').isString() && newData.child('email').isString()"
-      }
-    },
-    "userEmails": {
-      ".read": "auth.uid !== null",
-      "$email": {
-        ".write": "root.child('users').child(auth.uid).child('email').val() === $email"
       }
     },
     "userChats": {
       "$uid": {
         ".read": "$uid === auth.uid",
-        ".write": "$uid === auth.uid"
+        ".write": "$uid === auth.uid",
+        "$chatId": {
+          "creatorId": {
+            ".validate": "root.child('users').hasChild(newData.val())"
+          },
+          "otherId": {
+            ".validate": "root.child('users').hasChild(newData.val())"
+          },
+          "$chatMemberId": {
+            ".write": "$chatMemberId === auth.uid",
+            ".validate": "newData.hasChildren(['name', 'profilePicture']) && newData.child('name').isString() && newData.child('profilePicture').isString()"
+          },
+          "lastMessage": {
+            ".write": "root.child('chats').child($chatId).hasChild(auth.uid)",
+            ".validate": "newData.hasChildren(['name', 'profilePicture', 'text', 'time'])"
+          }
+        }
       }
     },
     "chats": {
       "$chatId": {
         ".read": "root.child('chats').child($chatId).hasChild(auth.uid)",
-        ".write" : "root.child('userChats').child(auth.uid).hasChild($chatId)",
-        ".validate": "newData.hasChildren(['chatMembers'])",
-        "chatMembers": {
+        ".write": "auth.uid === newData.child('creatorId').val()",
+        ".validate": "newData.hasChildren(['creatorId', 'otherId'])",
+        "creatorId": {
+          ".validate": "root.child('users').hasChild(newData.val())"
+        },
+        "otherId": {
           ".validate": "root.child('users').hasChild(newData.val())"
         },
         "$uid": {
-          ".write": "root.child('userChats').child($uid).hasChild($chatId) && $uid === auth.uid",
+          ".write": "$uid === auth.uid",
           ".validate": "newData.hasChildren(['name', 'profilePicture']) && newData.child('name').isString() && newData.child('profilePicture').isString()"
         },
         "lastMessage": {

@@ -23,12 +23,12 @@ export const resetToChat = NavigationActions.reset({
     ]
 });
 
-export const resetToChatDetailsFromCreation = (chatId) => {
+export const resetToChatDetailsFromCreation = (chatId, otherUser) => {
     return NavigationActions.reset({
         index: 1,
         actions: [
             NavigationActions.navigate({routeName: "Chat"}),
-            NavigationActions.navigate({routeName: "ChatDetails", params: {chatId: chatId}})
+            NavigationActions.navigate({routeName: "ChatDetails", params: {chatId: chatId, otherUser: otherUser}})
         ]
     });
 };
