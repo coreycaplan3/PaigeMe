@@ -3,23 +3,31 @@
  */
 import React, {Component} from 'react';
 import {View, StyleSheet, TouchableNativeFeedback, Text, ListView, TextInput} from 'react-native';
-import globalStyle from '../../styles/GlobalStyles';
+import globalStyles from '../../styles/GlobalStyles';
 import * as firebase from 'firebase';
+import {resetToChatDetailsFromCreation} from "../../config/Routes";
 
 export default class CreateChatScreen extends Component {
 
-    static navigationOptions: {
-        title: "Start a New Chat",
-        headerStyle: globalStyle.bgPrimaryColor,
-    };
+    static navigationOptions = ({navigation}) => ({
+        title: "Create a New Chat",
+        headerStyle: globalStyles.bgPrimaryColor,
+    });
 
     constructor(props) {
         super(props);
 
-        this.state.users = [];
+        this.state = {
+            users: new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
+        };
     }
 
     onTextTyped(text) {
+        if (!text) {
+            return;
+        }
+        console.log("Text", text);
+
         let dataSource = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
             .cloneWithRows([]);
         this.setState({
@@ -28,29 +36,55 @@ export default class CreateChatScreen extends Component {
 
         let users = [];
         const params = text.toLowerCase();
-        firebase.database().ref("userEmail").startAt(params)
-            .once("child_added", (snapshot) => {
-                users.push({email: snapshot.email, uid: snapshot.key});
-                let dataSource = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
-                    .cloneWithRows(users);
+
+        firebase.database().ref("users")
+            .orderByChild("email")
+            .startAt(params)
+            .limitToFirst(25)
+            .on("child_added", (snap) => {
+                users.push({email: snap.val().email, uid: snap.key, name: snap.val().name});
                 this.setState({
-                    users: dataSource
+                    users: this.state.users.cloneWithRows(users)
                 });
+            }, (error) => {
+                console.log("Error: ", error);
             });
+    }
+
+    createChatAndNavigate(user) {
+        const updates = {};
+        const currentUser = firebase.auth().currentUser;
+
+        const chatId = firebase.database().ref("userChats").child(firebase.auth().currentUser.uid).push().key;
+        const userChatObject = {};
+        userChatObject[chatId] = true;
+        updates["userChats/" + currentUser.uid] = userChatObject;
+
+        const chat = {};
+        chat["creatorId"] = currentUser.uid;
+        chat["otherId"] = user.uid;
+        chat[currentUser.uid] = {name: currentUser.displayName, profilePicture: currentUser.photoURL};
+
+        updates["chats/" + chatId] = chat;
+        firebase.database().ref().update(updates, (error) => {
+            if (!error) {
+                this.props.navigation.dispatch(resetToChatDetailsFromCreation(chatId));
+            }
+        })
     }
 
     renderRow(user) {
         return (
             <TouchableNativeFeedback onPress={() => {
-                const chatId = firebase.database().ref("userChats").child(firebase.auth().currentUser.uid)
-                    .push(true, (error) => {
-                        if (!error) {
-                            this.props.navigation.navigate("ChatDetails", {chatId: chatId, uid: user.uid});
-                        }
-                    })
-            }}>
+                this.createChatAndNavigate(user);
+            }} background={TouchableNativeFeedback.SelectableBackground()}>
                 <View style={styles.userContainer}>
-                    <Text>{user.email}</Text>
+                    <Text style={styles.emailText}>
+                        {user.email}
+                    </Text>
+                    <Text style={styles.nameText}>
+                        {user.email}
+                    </Text>
                 </View>
             </TouchableNativeFeedback>
         );
@@ -58,11 +92,15 @@ export default class CreateChatScreen extends Component {
 
     render() {
         return (
-            <View style={[globalStyle.paddingTop]}>
-                <TextInput placeholder="abc@lehigh.edu" onchangetext={(text) => {
+            <View style={[globalStyles.regularPadding]}>
+                <TextInput placeholder="abc@lehigh.edu" onChangeText={(text) => {
                     this.onTextTyped(text);
                 }}/>
-                <ListView dataSource={this.state.users} renderRow={(user) => this.renderRow(user)}/>
+                <Text style={[globalStyles.verticalMargin, styles.resultsText]}>
+                    Results
+                </Text>
+                <ListView dataSource={this.state.users}
+                          renderRow={(user, sectionID, rowID, highlightRow) => this.renderRow(user)}/>
             </View>
         );
     }
@@ -71,6 +109,18 @@ export default class CreateChatScreen extends Component {
 
 const styles = StyleSheet.create({
     userContainer: {
-        // borderTop: '#999'
+        height: 48,
+    },
+    resultsText: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        alignSelf: 'center',
+    },
+    emailText: {
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+    nameText: {
+        fontSize: 14
     }
 });

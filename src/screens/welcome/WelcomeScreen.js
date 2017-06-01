@@ -4,10 +4,17 @@
 import React, {Component} from 'react';
 import {View, Text, Image, Button, StyleSheet} from 'react-native';
 import globalStyle from '../../styles/GlobalStyles';
+import * as Routes from '../../config/Routes';
 import * as firebase from 'firebase';
-import FireAuth from 'react-native-firebase-auth'
+import FireAuth from 'react-native-firebase-auth';
 
 export default class WelcomeScreen extends Component {
+
+    static navigationOptions = {
+        headerStyle: {
+            display: "none"
+        }
+    };
 
     constructor(props) {
         super(props);
@@ -21,7 +28,9 @@ export default class WelcomeScreen extends Component {
                     "name": user.displayName,
                     "profilePicture": user.photoURL,
                     "email": user.email
-                }, )
+                },);
+
+                this.props.navigation.dispatch(Routes.resetToChat);
             }
         });
         FireAuth.googleLogin();
@@ -30,19 +39,19 @@ export default class WelcomeScreen extends Component {
     render() {
         return (
             <View style={[styles.container, globalStyle.bgColor, globalStyle.verticalPadding]}>
-                <View style={[globalStyle.regularShadow, globalStyle.regularPadding, {backgroundColor: 'white'}]}
-                      elevation={4}>
-                    <Text style={styles.welcomeTitle}>Welcome to PaigeMe</Text>
 
-                    <View style={styles.imageContainer}>
-                        <Image source={require('../../../assets/paige_bitmoji.png')}/>
-                    </View>
-                    <View style={styles.loginContainer}>
-                        <Button title={"Login with Google"} style={globalStyle.bgPrimaryColor} onPress={() => {
-                            WelcomeScreen.loginWithGoogle();
-                        }}/>
-                    </View>
+                <Text style={styles.welcomeTitle}>Welcome to PaigeMe</Text>
+
+                <View style={styles.imageContainer}>
+                    <Image source={require('../../../assets/paige_bitmoji.png')}/>
                 </View>
+
+                <View style={styles.loginContainer}>
+                    <Button title={"Login with Google"} style={globalStyle.bgPrimaryColor} onPress={() => {
+                        WelcomeScreen.loginWithGoogle();
+                    }}/>
+                </View>
+
             </View>
         );
     }
@@ -54,9 +63,10 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'column',
         alignItems: 'center',
+        justifyContent: 'center',
     },
     welcomeTitle: {
-        fontSize: 20,
+        fontSize: 30,
         color: 'black'
     },
     imageContainer: {
