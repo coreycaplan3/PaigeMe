@@ -23,7 +23,7 @@ export default class CreateChatScreen extends Component {
     }
 
     onTextTyped(text) {
-        if (!text) {
+        if (!text || text === "") {
             return;
         }
         console.log("Text", text);
@@ -66,7 +66,6 @@ export default class CreateChatScreen extends Component {
         chat[currentUser.uid] = {name: currentUser.displayName, profilePicture: currentUser.photoURL};
 
         updates["userChats/" + currentUser.uid + "/" + chatId] = chat;
-        updates["chats/" + chatId] = chat;
         firebase.database().ref().update(updates, (error) => {
             if (!error) {
                 this.props.navigation.dispatch(resetToChatDetailsFromCreation(chatId, otherUser));
@@ -86,7 +85,7 @@ export default class CreateChatScreen extends Component {
                         {user.email}
                     </Text>
                     <Text style={styles.nameText}>
-                        {user.email}
+                        {user.name}
                     </Text>
                 </View>
             </TouchableNativeFeedback>

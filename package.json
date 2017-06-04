@@ -7,13 +7,22 @@
     "test": "jest"
   },
   "dependencies": {
+    "@expo/react-native-action-sheet": "^0.3.1",
     "firebase": "^4.0.0",
+    "md5": "^2.2.1",
     "react": "16.0.0-alpha.6",
+    "react-addons-shallow-compare": "^15.5.2",
     "react-native": "0.44.2",
+    "react-native-communications": "^2.2.1",
     "react-native-facebook-login": "^1.5.0",
     "react-native-firebase-auth": "^1.0.0",
     "react-native-google-sign-in": "0.0.14",
-    "react-navigation": "^1.0.0-beta.11"
+    "react-native-invertible-scroll-view": "^1.0.0",
+    "react-native-lightbox": "^0.6.0",
+    "react-native-parsed-text": "0.0.18",
+    "react-navigation": "^1.0.0-beta.11",
+    "uuid": "latest",
+    "moment": "latest"
   },
   "devDependencies": {
     "babel-jest": "20.0.3",

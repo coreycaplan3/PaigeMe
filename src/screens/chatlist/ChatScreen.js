@@ -20,9 +20,11 @@ export default class ChatScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            chatsDataSource: new ListView.DataSource({rowHasChanged: (r1, r2) => {
-                return JSON.stringify(r1) !== JSON.stringify(r2);
-            }})
+            chatsDataSource: new ListView.DataSource({
+                rowHasChanged: (r1, r2) => {
+                    return JSON.stringify(r1) !== JSON.stringify(r2);
+                }
+            })
         }
     }
 
@@ -46,13 +48,21 @@ export default class ChatScreen extends Component {
     static createChatFromSnapshot(snapshot) {
         const otherId = snapshot.child("otherId").val();
         const otherUser = snapshot.child(otherId).val();
+        const creatorId = snapshot.child("creatorId").val();
+        const creatorUser = snapshot.child(creatorId).val();
         return {
             chatId: snapshot.key,
             otherId: otherId,
-            creatorId: snapshot.child("creatorId").val(),
+            creatorId: creatorId,
             otherUser: {
+                uid: otherId,
                 name: otherUser ? otherUser.name : "My Chat",
                 profilePicture: otherUser ? otherUser.profilePicture : ChatScreen.defaultProfilePicture
+            },
+            creatorUser: {
+                uid: creatorId,
+                name: creatorUser ? creatorUser.name : "My Chat",
+                profilePicture: creatorUser ? creatorUser.profilePicture : ChatScreen.defaultProfilePicture
             },
             lastMessage: {
                 text: snapshot.child("lastMessage").child("text").val()
@@ -71,13 +81,17 @@ export default class ChatScreen extends Component {
         let source;
         let name;
         let lastMessage;
-        let otherUser = chat.otherUser;
-        if (otherUser && otherUser.profilePicture && typeof otherUser.profilePicture === 'string' && otherUser.profilePicture.startsWith("http")) {
-            source = {uri: otherUser.profilePicture};
-            name = otherUser.name;
+        const otherUser = chat.otherUser;
+        const creatorUser = chat.creatorUser;
+        const userToRender = otherUser.uid === firebase.auth().currentUser.uid ? creatorUser : otherUser;
+
+        name = userToRender.name;
+        if (userToRender.profilePicture &&
+            typeof userToRender.profilePicture === 'string'
+            && userToRender.profilePicture.startsWith("http")) {
+            source = {uri: userToRender.profilePicture};
         } else {
             source = ChatScreen.defaultProfilePicture;
-            name = "Paige Innarella";
         }
         if (chat.lastMessage && chat.lastMessage.text) {
             lastMessage = chat.lastMessage.text;

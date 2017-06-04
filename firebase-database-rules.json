@@ -32,31 +32,19 @@
     },
     "chats": {
       "$chatId": {
-        ".read": "root.child('chats').child($chatId).hasChild(auth.uid)",
-        ".write": "auth.uid === newData.child('creatorId').val()",
-        ".validate": "newData.hasChildren(['creatorId', 'otherId'])",
-        "creatorId": {
-          ".validate": "root.child('users').hasChild(newData.val())"
-        },
-        "otherId": {
-          ".validate": "root.child('users').hasChild(newData.val())"
-        },
-        "$uid": {
-          ".write": "$uid === auth.uid",
-          ".validate": "newData.hasChildren(['name', 'profilePicture']) && newData.child('name').isString() && newData.child('profilePicture').isString()"
-        },
-        "lastMessage": {
-          ".write": "root.child('chats').child($chatId).hasChild(auth.uid)",
-          ".validate": "newData.hasChildren(['name', 'profilePicture', 'text', 'time'])"
+        "$messageId": {
+          ".read": "root.child('userChats').child(auth.uid).hasChild($chatId)"
         }
       }
     },
-    "messages": {
-      "$chatId": {
-        ".read": "root.child('userChats').child(auth.uid).hasChild($chatId)",
-        ".write": "root.child('userChats').child(auth.uid).hasChild($chatId)",
-        "$messageId": {
-          ".validate": "newData.hasChildren(['uid', 'time', 'text', 'sound', 'img']) && newData.child('uid').val() === auth.uid && newData.child('time').val() < now"
+    "userMessages": {
+      "$uid": {
+        "$chatId": {
+          ".read": "root.child('userChats').child(auth.uid).hasChild($chatId)",
+          ".write": "root.child('userChats').child(auth.uid).hasChild($chatId)",
+          "$messageId": {
+            ".validate": "newData.hasChildren(['uid', 'time', 'text']) && newData.child('uid').val() === auth.uid && newData.child('time').val() < now"
+          }
         }
       }
     },

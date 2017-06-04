@@ -21,7 +21,7 @@ export default class WelcomeScreen extends Component {
         FireAuth.init({webClientId: "paigeme-52db8", apiKey: "AIzaSyDoFa-UtnXB9YdzZx04l93qx0UW7qPQLtg"});
     }
 
-    static loginWithGoogle() {
+    loginWithGoogle() {
         firebase.auth().onAuthStateChanged(user => {
             if (user) {
                 firebase.database().ref("users").child(user.uid).update({
@@ -48,7 +48,7 @@ export default class WelcomeScreen extends Component {
 
                 <View style={styles.loginContainer}>
                     <Button title={"Login with Google"} style={globalStyle.bgPrimaryColor} onPress={() => {
-                        WelcomeScreen.loginWithGoogle();
+                        this.loginWithGoogle();
                     }}/>
                 </View>
 

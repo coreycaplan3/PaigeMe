@@ -20,7 +20,7 @@ export default class LoadingScreen extends React.Component {
     }
 
     componentDidMount() {
-        // setTimeout(() => {
+        setTimeout(() => {
             firebase.auth().onAuthStateChanged((user) => {
                 if (user) {
                     this.props.navigation.dispatch(Routes.resetToChat);
@@ -28,9 +28,10 @@ export default class LoadingScreen extends React.Component {
                     this.props.navigation.dispatch(Routes.resetToLogin);
                 }
             })
-        // }, 1000);
+        }, 800);
     }
 
+    //noinspection JSMethodCanBeStatic
     render() {
         return (
             <View style={[styles.loginContainer, globalStyles.bgColor]}>
