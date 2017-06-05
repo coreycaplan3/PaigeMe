@@ -82,9 +82,10 @@ export default class ChatDetailsScreen extends Component {
             _id: userId,
             name: this.props.navigation.state.params.chat[userId].name,
             avatar: this.props.navigation.state.params.chat[userId].avatar,
-        }
+        };
         return (
             <GiftedChat
+                isloadingearlier={true}
                 messages={this.state.messages}
                 onSend={(messages) => this.onSend(messages)}
                 user={user}

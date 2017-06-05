@@ -136,7 +136,7 @@ dependencies {
 
     // react native push notifications
     compile project(':react-native-push-notification')
-        compile ('com.google.android.gms:play-services-gcm:') {
+        compile ('com.google.android.gms:play-services-gcm:10.0.1') {
             force = true;
         }
 }

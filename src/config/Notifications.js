@@ -37,7 +37,7 @@ export const configureNotifications = () => {
 
             PushNotification.localNotification({
                 // Cross platform
-                message: notification.notification.body,
+                message: notification.text,
 
                 // Android
                 vibrate: true,
