@@ -43,7 +43,12 @@ export default class CreateChatScreen extends Component {
             .limitToFirst(25)
             .on("child_added", (snap) => {
                 if (firebase.auth().currentUser && firebase.auth().currentUser.email !== snap.val().email) {
-                    users.push({email: snap.val().email, uid: snap.key, name: snap.val().name});
+                    users.push({
+                        email: snap.val().email,
+                        uid: snap.key,
+                        name: snap.val().name,
+                        profilePicture: snap.val().profilePicture
+                    });
                     this.setState({
                         users: this.state.users.cloneWithRows(users)
                     });
@@ -64,11 +69,14 @@ export default class CreateChatScreen extends Component {
         chat["creatorId"] = currentUser.uid;
         chat["otherId"] = user.uid;
         chat[currentUser.uid] = {name: currentUser.displayName, profilePicture: currentUser.photoURL};
+        chat[otherUser.uid] = {name: otherUser.displayName, profilePicture: otherUser.photoURL};
 
         updates["userChats/" + currentUser.uid + "/" + chatId] = chat;
         firebase.database().ref().update(updates, (error) => {
             if (!error) {
-                this.props.navigation.dispatch(resetToChatDetailsFromCreation(chatId, otherUser));
+                setTimeout(() => {
+                    this.props.navigation.dispatch(resetToChatDetailsFromCreation(chat, otherUser));
+                }, 500);
             } else {
                 console.log("Error creating chat: ", error);
             }

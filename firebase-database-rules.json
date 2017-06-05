@@ -8,6 +8,12 @@
         ".validate": "newData.hasChildren(['name', 'profilePicture', 'email']) && newData.child('name').isString() && newData.child('profilePicture').isString() && newData.child('email').isString()"
       }
     },
+    "userTokens": {
+      "$uid": {
+        ".write": "$uid === auth.uid",
+        ".read": "$uid === auth.uid"
+      }
+    },
     "userChats": {
       "$uid": {
         ".read": "$uid === auth.uid",
@@ -20,7 +26,6 @@
             ".validate": "root.child('users').hasChild(newData.val())"
           },
           "$chatMemberId": {
-            ".write": "$chatMemberId === auth.uid",
             ".validate": "newData.hasChildren(['name', 'profilePicture']) && newData.child('name').isString() && newData.child('profilePicture').isString()"
           },
           "lastMessage": {
@@ -32,9 +37,8 @@
     },
     "chats": {
       "$chatId": {
-        "$messageId": {
-          ".read": "root.child('userChats').child(auth.uid).hasChild($chatId)"
-        }
+        ".validate": "newData.hasChildren(['chatMembers'])",
+        ".read": "data.child('chatMembers').hasChild(auth.uid)"
       }
     },
     "userMessages": {
@@ -43,7 +47,7 @@
           ".read": "root.child('userChats').child(auth.uid).hasChild($chatId)",
           ".write": "root.child('userChats').child(auth.uid).hasChild($chatId)",
           "$messageId": {
-            ".validate": "newData.hasChildren(['uid', 'time', 'text']) && newData.child('uid').val() === auth.uid && newData.child('time').val() < now"
+            ".validate": "newData.hasChildren(['time', 'text', 'uid']) && newData.child('uid').val() === auth.uid"
           }
         }
       }

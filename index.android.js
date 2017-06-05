@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import * as Routes from './src/config/Routes';
 import * as firebase from 'firebase';
+import {configureNotifications} from "./src/config/Notifications";
 
 const config = {
     apiKey: "AIzaSyDoFa-UtnXB9YdzZx04l93qx0UW7qPQLtg",
@@ -20,5 +21,7 @@ const config = {
     messagingSenderId: "584938196675"
 };
 firebase.initializeApp(config);
+
+configureNotifications();
 
 AppRegistry.registerComponent('PaigeMe', () => Routes.PaigeMe);

@@ -297,7 +297,8 @@ class GiftedChat extends React.Component {
 
           invertibleScrollViewProps={this.invertibleScrollViewProps}
 
-          messages={this.getMessages()}
+          // messages={this.getMessages()}
+          messages={this.props.messages}
 
           ref={component => this._messageContainerRef = component}
         />

@@ -10,6 +10,8 @@ import com.facebook.soloader.SoLoader;
 
 import com.reactlibrary.googlesignin.RNGoogleSignInPackage;
 
+import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -25,7 +27,8 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-          new RNGoogleSignInPackage()
+          new RNGoogleSignInPackage(),
+          new ReactNativePushNotificationPackage()
       );
     }
   };

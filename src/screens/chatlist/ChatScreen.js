@@ -6,6 +6,7 @@ import {View, ListView, Text, TouchableNativeFeedback, Image, StyleSheet} from '
 import globalStyles from '../../styles/GlobalStyles';
 import ChatScreenNavMenu from "../../components/ChatScreenNavMenu";
 import * as firebase from 'firebase';
+import {createChatFromSnapshot, getUserFromChat} from "../../model/Chat";
 
 export default class ChatScreen extends Component {
 
@@ -30,12 +31,11 @@ export default class ChatScreen extends Component {
 
     componentDidMount() {
         const currentUser = firebase.auth().currentUser;
-        console.log("Current User", currentUser.email, currentUser.uid);
         firebase.database().ref("userChats").child(currentUser.uid).on("value", snapshot => {
             const chats = [];
 
             snapshot.forEach(child => {
-                const chat = ChatScreen.createChatFromSnapshot(child);
+                const chat = createChatFromSnapshot(child);
                 chats.push(chat);
             });
 
@@ -45,35 +45,14 @@ export default class ChatScreen extends Component {
         });
     }
 
-    static createChatFromSnapshot(snapshot) {
-        const otherId = snapshot.child("otherId").val();
-        const otherUser = snapshot.child(otherId).val();
-        const creatorId = snapshot.child("creatorId").val();
-        const creatorUser = snapshot.child(creatorId).val();
-        return {
-            chatId: snapshot.key,
-            otherId: otherId,
-            creatorId: creatorId,
-            otherUser: {
-                uid: otherId,
-                name: otherUser ? otherUser.name : "My Chat",
-                profilePicture: otherUser ? otherUser.profilePicture : ChatScreen.defaultProfilePicture
-            },
-            creatorUser: {
-                uid: creatorId,
-                name: creatorUser ? creatorUser.name : "My Chat",
-                profilePicture: creatorUser ? creatorUser.profilePicture : ChatScreen.defaultProfilePicture
-            },
-            lastMessage: {
-                text: snapshot.child("lastMessage").child("text").val()
-            }
-        };
+    componentWillUnmount() {
+        firebase.database().ref("userChats").child(firebase.auth().currentUser.uid).off();
     }
 
     onClickRow(chat) {
         this.props.navigation.navigate("ChatDetails", {
-            chatId: chat.chatId,
-            otherUser: chat.otherUser,
+            chat: chat,
+            otherUser: getUserFromChat(chat),
         });
     }
 
@@ -81,9 +60,7 @@ export default class ChatScreen extends Component {
         let source;
         let name;
         let lastMessage;
-        const otherUser = chat.otherUser;
-        const creatorUser = chat.creatorUser;
-        const userToRender = otherUser.uid === firebase.auth().currentUser.uid ? creatorUser : otherUser;
+        const userToRender = getUserFromChat(chat);
 
         name = userToRender.name;
         if (userToRender.profilePicture &&

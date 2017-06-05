@@ -5,7 +5,7 @@ import {
   View,
 } from 'react-native';
 
-import ShallowCompare from 'react-addons-shallow-compare';
+import shallowCompare from 'react-addons-shallow-compare';
 import InvertibleScrollView from 'react-native-invertible-scroll-view';
 import md5 from 'md5';
 import LoadEarlier from './LoadEarlier';
@@ -52,13 +52,14 @@ export default class MessageContainer extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    if (!ShallowCompare(this.props, nextProps)) {
-      return true;
-    }
-    if (!ShallowCompare(this.state, nextState)) {
-      return true;
-    }
-    return false;
+    return true;
+    // if (!shallowCompare(this.props, nextProps)) {
+    //   return true;
+    // }
+    // if (!shallowCompare(this.state, nextState)) {
+    //   return true;
+    // }
+    // return false;
   }
 
   componentWillReceiveProps(nextProps) {
